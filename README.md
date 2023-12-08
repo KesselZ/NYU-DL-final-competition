@@ -20,4 +20,3 @@ Semantic segmentation model(UNet):
 
 [Vedio frame prediction(SimVP)](https://drive.google.com/file/d/1AGg9HCztwAbeBx8fEY1-gm8wE2pa-nqD/view?usp=sharing)
 
-[点击此处下载模型权重](https://drive.google.com/your_link)
