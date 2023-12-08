@@ -1,17 +1,17 @@
 # NYU-DL-final-competition
-Classification_Evaluation: Use to quickly check the performance and visualization
+**Classification_Evaluation**: Use to quickly check the performance and visualization
 
-Label_the_Unlabel: Use Semantic segmentation model to label the unlabeled dataset.i.e.generate the mask.npy for each vedio
+**Label_the_Unlabel**: Use Semantic segmentation model to label the unlabeled dataset.i.e.generate the mask.npy for each vedio
 
-main_classification: main file, for training
+**main_classification**: main file, for training
 
-Result_Generator: for generating the final pt file, used for submission and grade.
+**Result_Generator**: for generating the final pt file, used for submission and grade.
 
-Seg_evaluation: Use to quickly check the performance and visualization for the Semantic segmentation model.
+**Seg_evaluation**: Use to quickly check the performance and visualization for the Semantic segmentation model.
 
-seg_main: for training the Semantic segmentation model.
+**seg_main**: for training the Semantic segmentation model.
 
-utils: some useful functions.
+**utils**: some useful functions.
 
 If you want to use the pre-trained weight of my work, you can download them here:
 Semantic segmentation model(UNet):
