@@ -13,8 +13,7 @@
 
 **utils**: some useful functions.
 
-If you want to use the pre-trained weight of my work, you can download them here:
-Semantic segmentation model(UNet):
+If you want to use the pre-trained weight of my work, you can download them here and put them in the weight folder:
 
 [Semantic segmentation model(UNet)](https://drive.google.com/file/d/1pGPOE57lN367BO2R_0nXfuJARZlRyAJG/view?usp=drive_link)
 
