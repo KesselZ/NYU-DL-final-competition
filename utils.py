@@ -8,12 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from torchvision import transforms
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
-
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 
 def draw_label_masks(masks, num_classes=49):
     """
@@ -44,6 +39,11 @@ def draw_label_masks(masks, num_classes=49):
         plt.axis('off')
 
     plt.show()
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
 
 
 def plot_images(tensor):
@@ -82,7 +82,6 @@ def plot_images(tensor):
 
     plt.tight_layout()
     plt.show()
-
 
 def plot_timestep_images(tensor):
     """
@@ -129,11 +128,11 @@ def plot_timestep_images(tensor):
 
 def draw_timestep_masks(masks, num_classes=49):
     """
-    Display semantic segmentation masks with color gradients assigned to each class.
+    展示语义分割掩膜，使用颜色渐变为每个类别分配颜色。
 
-    Parameters:
-    masks - A tensor of semantic segmentation masks with shape [B, T, H, W].
-    num_classes - Number of classes in the masks, default is 49.
+    参数:
+    masks - 一个形状为 [B, T, H, W] 的语义分割掩膜张量。
+    num_classes - 掩膜中的类别数量，默认为 49。
     """
     B, T, H, W = masks.shape
 
@@ -154,7 +153,6 @@ def draw_timestep_masks(masks, num_classes=49):
 
         plt.show()
 
-
 def map_pixels_tensor(image_tensor, mapping_tensor):
     # 扩展 mapping_tensor 以进行广播
     mapping_tensor = mapping_tensor.view(-1, 1, 1)
@@ -169,7 +167,6 @@ def map_pixels_tensor(image_tensor, mapping_tensor):
     mapped_array = mapping_tensor[min_diff_indices].squeeze()
 
     return mapped_array
-
 
 def convert_gray_image_to_mask(inputs_gray_images, pred_gray_images):
     """
@@ -186,25 +183,25 @@ def convert_gray_image_to_mask(inputs_gray_images, pred_gray_images):
     inputs_masks = inputs_gray_images.squeeze(2)  # Assuming channel dimension is the third dimension
     pred_masks = pred_gray_images.squeeze(2)
 
-    batch_ts = []
+    batch_ts=[]
     for n in range(pred_masks.size(0)):  # Iterate over each batch
         # Get the unique pixel values from the last time step of inputs_gray_images for this batch
         unique_pixels = torch.unique(inputs_masks[n, -1])
         print(unique_pixels)
 
-        new_ts = []
+        new_ts=[]
         # Iterate over each time step for this batch
         for t in range(pred_masks.size(1)):  # Iterate over each time step
-            new_t = map_pixels_tensor(pred_masks[n, t], unique_pixels)
+            new_t=map_pixels_tensor(pred_masks[n,t], unique_pixels)
             new_ts.append(new_t)
 
         batch_t = torch.stack(new_ts, dim=0)
         batch_ts.append(batch_t)
 
-    pred_masks_new = torch.stack(batch_ts, dim=0)
+    pred_masks_new=torch.stack(batch_ts, dim=0)
 
     # Scale pixel values up to the range 0-48
-    pred_masks_new = (pred_masks_new * 48).clamp(0, 48)
+    pred_masks_new =(pred_masks_new*48).clamp(0, 48)
 
     # Convert to integer
     pred_masks_new = pred_masks_new.int()
@@ -213,7 +210,6 @@ def convert_gray_image_to_mask(inputs_gray_images, pred_gray_images):
 
 
 import torch
-
 
 def convert_gray_image_to_mask_simple(pred_gray_images):
     """
@@ -264,24 +260,24 @@ def convert_mask_to_gray_image(mask):
 
     return normalized_mask
 
-
 def convert_to_one_hot(labels, num_classes=49):
     """
-    Converts label-encoded images to one-hot encoded format. Compatible with input shapes [N, T, H, W] and [N, H, W].
+    将标签编码的图像转换为 one-hot 编码格式。兼容 [N, T, H, W] 和 [N, H, W] 形状的输入。
 
-    Parameters:
-    labels - Label-encoded images.
-    num_classes - Total number of classes.
+    参数:
+    labels - 标签编码的图像。
+    num_classes - 类别总数。
 
-    Returns:
-    one_hot_labels - One-hot encoded images.
+    返回:
+    one_hot_labels - one-hot 编码的图像。
     """
-    if labels.dim() == 4:  # [N, T, H, W]
+    # 检查输入维度
+    if labels.dim() == 4:  # 形状 [N, T, H, W]
         N, T, H, W = labels.size()
         one_hot_labels = torch.zeros(N, T, num_classes, H, W, device=labels.device)
-        labels = labels.long().unsqueeze(2)  # To [N, T, 1, H, W]
+        labels = labels.long().unsqueeze(2)  # 形状变为 [N, T, 1, H, W]
         one_hot_labels.scatter_(2, labels, 1)
-    elif labels.dim() == 3:  # [N, H, W]
+    elif labels.dim() == 3:  # 形状 [N, H, W]
         N, H, W = labels.size()
         one_hot_labels = torch.zeros(N, num_classes, H, W, device=labels.device)
         labels = labels.long()
@@ -297,39 +293,111 @@ import torch
 
 def convert_from_one_hot(one_hot_labels, dtype=torch.float32):
     """
-    Converts label-encoded images to one-hot encoded format. Compatible with input shapes [N, T, H, W] and [N, H, W].
+    将 one-hot 编码的图像转换为标签编码格式。兼容 [N, C, H, W] 和 [N, T, C, H, W] 形状的输入。
 
-    Parameters:
-    labels - Label-encoded images.
-    num_classes - Total number of classes.
+    参数:
+    one_hot_labels - one-hot 编码的图像。
 
-    Returns:
-    one_hot_labels - One-hot encoded images.
+    返回:
+    labels - 标签编码的图像。
     """
-    if one_hot_labels.dim() == 5:  # [N, T, C, H, W]
+    # 检查输入维度
+    if one_hot_labels.dim() == 5:  # 形状 [N, T, C, H, W]
         labels = torch.argmax(one_hot_labels, dim=2)
-    elif one_hot_labels.dim() == 4:  # [N, C, H, W]
+    elif one_hot_labels.dim() == 4:  # 形状 [N, C, H, W]
         labels = torch.argmax(one_hot_labels, dim=1)
     else:
         raise ValueError("Unsupported one-hot label shape: {}".format(one_hot_labels.size()))
 
+        # 转换数据类型
     labels = labels.to(dtype)
     return labels
 
 
+# 示例使用
+# 假设 one_hot_labels 是一个形状为 [N, C, H, W] 或 [N, T, C, H, W] 的张量
+# labels = convert_from_one_hot(one_hot_labels)
+
+
+class IoULoss(nn.Module):
+    """
+    计算基于交并比 (Intersection over Union, IoU) 的损失，常用于语义分割任务。
+    IoU 损失用于评估预测掩码和真实掩码之间的重叠度。此实现提供了平滑项以避免除以零。
+
+    参数:
+        smooth (float, 可选): 平滑项，用以防止分母为零。默认为 1e-6。
+
+    输入:
+        inputs (Tensor): 模型的预测输出，形状为 [N, C, H, W]，其中
+                         N 是批大小，C 是类别数，H 和 W 是图像的高度和宽度。
+        targets (Tensor): 真实的标签（掩码），形状同 inputs。
+
+    输出:
+        loss (Tensor): 计算得到的 IoU 损失值，是一个标量，表示整个批次的平均损失。
+    """
+
+    def __init__(self, smooth=1e-6):
+        super(IoULoss, self).__init__()
+        self.smooth = smooth
+
+    def forward(self, inputs, targets):
+        # 如果输入和目标完全相同，输出 'equal'（用于调试）
+        if torch.equal(inputs, targets):
+            print('equal')
+
+        # 计算交集和并集
+        intersection = torch.sum(inputs * targets, dim=(2, 3))
+        total = torch.sum(inputs + targets, dim=(2, 3))
+        union = total - intersection
+
+        # 计算 IoU
+        IoU = (intersection + self.smooth) / (union + self.smooth)
+
+        # 损失为 1 - IoU 的均值
+        return 1 - IoU.mean()
+
+
+def iou(inputs, targets, smooth=1e-6):
+    """
+    计算基于交并比 (IoU) 的损失，常用于语义分割任务。
+    此函数计算预测掩码和真实掩码之间的 IoU 损失，忽略背景类别。
+
+    参数:
+        inputs (Tensor): 预测输出，形状为 [N, C, H, W]。
+        targets (Tensor): 真实的标签（掩码），形状同 inputs。
+        smooth (float): 平滑项，用以防止分母为零。默认为 1e-6。
+
+    返回:
+        loss (Tensor): 计算得到的 IoU 损失值，是一个标量，表示整个批次的平均损失。
+    """
+
+    # 忽略背景类别（类别 0）
+    inputs = inputs[:, 1:, :, :]
+    targets = targets[:, 1:, :, :]
+
+    # 计算交集和并集
+    intersection = torch.sum(inputs * targets, dim=(2, 3))
+    total = torch.sum(inputs + targets, dim=(2, 3))
+    union = total - intersection
+
+    # 计算 IoU
+    IoU = (intersection + smooth) / (union + smooth)
+
+    return IoU.mean()
+
 def iou_NHW(inputs, targets, ignore_index=0, smooth=1e-6):
     """
-    Calculates the Intersection over Union (IoU) metric commonly used in semantic segmentation tasks.
-    This function computes the IoU metric between the predicted masks and the ground truth masks, ignoring a specific class (default is background).
+    计算基于交并比 (IoU) 的指标，常用于语义分割任务。
+    此函数计算预测掩码和真实掩码之间的 IoU 指标，忽略特定类别（默认为背景）。
 
-    Parameters:
-    inputs (Tensor): Predicted output with shape [N, H, W], where each pixel's value is the class index.
-    targets (Tensor): Ground truth labels (masks) with the same shape as inputs.
-    ignore_index (int): Class index to be ignored. Default is 0 (background).
-    smooth (float): Smoothing term to prevent division by zero. Default is 1e-6.
+    参数:
+        inputs (Tensor): 预测输出，形状为 [N, H, W]，每个像素的值为类别索引。
+        targets (Tensor): 真实的标签（掩码），形状同 inputs。
+        ignore_index (int): 要忽略的类别索引。默认为 0（背景）。
+        smooth (float): 平滑项，用以防止分母为零。默认为 1e-6。
 
-    Returns:
-    IoU (Tensor): Computed IoU value, a scalar representing the average IoU over the entire batch.
+    返回:
+        IoU (Tensor): 计算得到的 IoU 值，是一个标量，表示整个批次的平均 IoU。
     """
 
     # 确保输入和目标位于同一设备
@@ -375,6 +443,12 @@ def iou_NHW(inputs, targets, ignore_index=0, smooth=1e-6):
 
     return iou_mean
 
+def iou_loss_NHW(inputs, targets, ignore_index=0, smooth=1e-6):
+    iou = iou_NHW(inputs, targets, ignore_index=ignore_index, smooth=smooth)
+    return 1 - iou
+
+#21to1:训练集21个语义分割，标签1个语义分割（预测第22帧）
+#11to11:训练集11个语义分割，标签11个语义分割（预测后11帧）
 
 class MaskMaskDataset(Dataset):
     # 用21帧预测第22帧
@@ -390,8 +464,7 @@ class MaskMaskDataset(Dataset):
                     self.videos.append(video_path)
 
         elif dataset == 'Train+Unlabeled':
-            initial_videos = [os.path.join('train', 'video_' + str(i)) for i in range(1000)] + [
-                os.path.join('unlabeled', 'video_' + str(i)) for i in range(2000, 15000)]
+            initial_videos = [os.path.join('train', 'video_' + str(i)) for i in range(1000)] + [os.path.join('unlabeled', 'video_' + str(i)) for i in range(2000, 15000)]
             self.videos = []
             for video_path in initial_videos:
                 mask_path = os.path.join(video_path, 'mask.npy')
@@ -407,8 +480,7 @@ class MaskMaskDataset(Dataset):
                 self.videos.append(video_path)
 
         elif dataset == 'Train+Unlabeled-Full':
-            initial_videos = [os.path.join('train', 'video_' + str(i)) for i in range(1000)] + [
-                os.path.join('unlabeled', 'video_' + str(i)) for i in range(2000, 15000)]
+            initial_videos = [os.path.join('train', 'video_' + str(i)) for i in range(1000)] + [os.path.join('unlabeled', 'video_' + str(i)) for i in range(2000, 15000)]
             self.videos = []
             for video_path in initial_videos:
                 self.videos.append(video_path)
@@ -427,14 +499,13 @@ class MaskMaskDataset(Dataset):
         mask = np.load(mask_path)
 
         frames = mask[:11]
-        label = mask[:11] if len(self.videos) == 2000 else mask[11:22]
+        label = mask[:11] if len(self.videos)==2000 else mask[11:22]
 
         # 转换为PyTorch张量
         frames = torch.from_numpy(frames).float()
         label = torch.from_numpy(label).float()
 
         return frames, label
-
 
 class ImageImageDataset(Dataset):
     def __init__(self, dataset, mode="21to1"):
@@ -481,9 +552,9 @@ class ImageImageDataset(Dataset):
 
         return frames, label
 
-
 class ImageMaskDataset(Dataset):
     def __init__(self, dataset_type='train'):
+        self.is_hidden = False
         if dataset_type in ['train', 'val']:
             self.root_dir = dataset_type
             folder_range = range(1000) if dataset_type == 'train' else range(1000, 2000)
@@ -494,8 +565,9 @@ class ImageMaskDataset(Dataset):
             self.is_labeled = False
         elif dataset_type == 'hidden':
             self.root_dir = 'hidden'
-            folder_range = range(15000, 17000)
+            folder_range = range(15000,17000)
             self.is_labeled = True
+            self.is_hidden = True
         else:
             raise ValueError("dataset_type must be 'train', 'val', or 'unlabeled'")
 
@@ -521,17 +593,15 @@ class ImageMaskDataset(Dataset):
             folder_index = self.folder_indices[idx]
             mask_path = os.path.join(self.video_folders[folder_index], 'mask.npy')
             mask = np.load(mask_path)
-            label = torch.from_numpy(mask[idx % 22]).long()
-            # 注意，这里如果是hidden，那就手动改成11
+            label = torch.from_numpy(mask[idx % 11 if self.is_hidden else 22]).long()
+            # remind: change 22 to 11 if hidden, and change 11 to 22 if other
         else:
-            # 对于未标记的数据集，返回一个空的标签或特殊值
             print("Warning: returning empty label for unlabeled dataset")
-            label = torch.tensor(-1)  # 或者可以是全零张量
+            label = torch.tensor(-1)
 
         return image, label
 
-
-def checkpoint_save(epoch, model, optimizer, scheduler):
+def checkpoint_save(epoch,model, optimizer,scheduler):
     torch.save({
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
@@ -569,16 +639,24 @@ def filter_pred_by_input(pred, input):
     return pred
 
 
+import torch
+
+
+import torch
+
+import torch
+
+
 def remove_rare_pixels(pred, threshold=100):
     """
-    Sets pixel values that occur less than a specified threshold to 0.
+    将出现次数低于阈值的像素值设置为0。
 
-    Parameters:
-    pred (torch.Tensor): Input image tensor with shape N x H x W.
-    threshold (int): Threshold for occurrence count; pixels with counts below this threshold are considered outliers and set to 0.
+    参数:
+        pred (torch.Tensor): 输入的图像张量，形状为 N x H x W。
+        threshold (int): 出现次数的阈值，低于此值的像素将被视为异常并设置为0。
 
-    Returns:
-    torch.Tensor: Processed image tensor.
+    返回:
+        torch.Tensor: 处理后的图像张量。
     """
     N, H, W = pred.shape
 
@@ -598,3 +676,4 @@ def remove_rare_pixels(pred, threshold=100):
             pred[n][pred[n] == val] = 0
 
     return pred
+
