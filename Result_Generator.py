@@ -7,7 +7,9 @@ import torch.nn as nn
 from torch.autograd import Variable
 import time
 from utils import *
+from model.ConvLSTM import *
 from model.SimVP_classification import *
+from model.SimVP2 import *
 from torchmetrics import JaccardIndex
 from tqdm import tqdm
 
@@ -27,17 +29,16 @@ train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True
 val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 hidden_dataloader = DataLoader(hidden_dataset, batch_size=batch_size, shuffle=False)
 
-model = SimVP((11, input_dim, 160, 240)).to(device)
-saved_state_dict = torch.load('weight/SimVP_check_42.98.pth', map_location=device)
+model = SimVP_Model((11, input_dim, 160, 240)).to(device)
+saved_state_dict = torch.load('weight/SimVP_check_44.08.pth', map_location=device)
 model.load_state_dict(saved_state_dict)
 
 print(len(val_dataloader))
 
-
 preds = []
 
 with torch.no_grad():
-    for i, (inputs, _) in enumerate(tqdm(hidden_dataloader, desc="Validating")):
+    for i, (inputs, _) in enumerate(tqdm(val_dataloader, desc="Validating")):
         # draw_timestep_masks(inputs)
         # draw_timestep_masks(labels)
 
@@ -58,3 +59,15 @@ with torch.no_grad():
 result = torch.cat(preds, dim=0)
 result = result.to(torch.uint8)
 torch.save(result, 'result.pt')
+
+print("getting val")
+val_dataloader = DataLoader(val_dataset, batch_size=1000, shuffle=False)
+
+inputs, labels = next(iter(val_dataloader))
+labels = labels[:, -1, :, :]
+
+# 计算 Jaccard Index
+print("Jaccard Index:")
+with torch.no_grad():
+    jaccard = JaccardIndex(task="multiclass", num_classes=49).to(device)
+    print(jaccard(result.to(device), labels.to(device)))
