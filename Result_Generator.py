@@ -35,10 +35,10 @@ model.load_state_dict(saved_state_dict)
 
 print(len(val_dataloader))
 
-preds = []
 
+preds = []
 with torch.no_grad():
-    for i, (inputs, _) in enumerate(tqdm(val_dataloader, desc="Validating")):
+    for i, (inputs, _) in enumerate(tqdm(hidden_dataloader, desc="Validating")):
         # draw_timestep_masks(inputs)
         # draw_timestep_masks(labels)
 
@@ -62,7 +62,6 @@ torch.save(result, 'result.pt')
 
 print("getting val")
 val_dataloader = DataLoader(val_dataset, batch_size=1000, shuffle=False)
-
 inputs, labels = next(iter(val_dataloader))
 labels = labels[:, -1, :, :]
 
