@@ -15,7 +15,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 num_epochs = 20
 batch_size = 4
-num_epoch_for_val = 5 # 设置每隔多少个epoch进行一次验证
+num_epoch_for_val = 5 # How often to compute val loss
 
 train_dataset = ImageMaskDataset(dataset_type='train')
 val_dataset = ImageMaskDataset(dataset_type='val')
@@ -55,9 +55,7 @@ for epoch in range(num_epochs):
         inputs, labels = inputs.to(device), labels.to(device)
 
         optimizer.zero_grad()
-        print("!",inputs.shape)
         outputs = model(inputs)
-        print(outputs.shape)
 
         loss = criterion(outputs, labels)
         loss.backward()
