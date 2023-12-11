@@ -132,5 +132,5 @@ for epoch in range(epochs):
 
 time.sleep(0.1)
 
-torch.save(model.state_dict(), 'weight/SimVP_check_100.pth')
+torch.save(model.state_dict(), 'weight/SimVP_check_44.08.pth')
 
