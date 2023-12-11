@@ -87,4 +87,4 @@ for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs} finished, Train Loss: {epoch_loss:.4f}, Avg Train IoU: {epoch_iou:.4f}")
 
 
-torch.save(model.state_dict(), 'unet_20.pth')
+torch.save(model.state_dict(), 'weight/unet_20.pth')
