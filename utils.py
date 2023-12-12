@@ -593,8 +593,8 @@ class ImageMaskDataset(Dataset):
             folder_index = self.folder_indices[idx]
             mask_path = os.path.join(self.video_folders[folder_index], 'mask.npy')
             mask = np.load(mask_path)
-            label = torch.from_numpy(mask[idx % 11 if self.is_hidden else 22]).long()
-            # remind: change 22 to 11 if hidden, and change 11 to 22 if other
+            label = torch.from_numpy(mask[idx % 11 if self.is_hidden else 21]).long()
+            # remind: change 21 to 11 if hidden, and change 11 to 21 if other
         else:
             print("Warning: returning empty label for unlabeled dataset")
             label = torch.tensor(-1)
