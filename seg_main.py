@@ -9,7 +9,6 @@ import time
 from utils import *
 from tqdm import tqdm
 from model.UNet import *
-from model.SegNet import *
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
