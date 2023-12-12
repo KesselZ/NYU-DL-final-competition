@@ -566,7 +566,7 @@ class ImageMaskDataset(Dataset):
         elif dataset_type == 'hidden':
             self.root_dir = 'hidden'
             folder_range = range(15000,17000)
-            self.is_labeled = True
+            self.is_labeled = False
             self.is_hidden = True
         else:
             raise ValueError("dataset_type must be 'train', 'val', or 'unlabeled'")
@@ -596,7 +596,6 @@ class ImageMaskDataset(Dataset):
             label = torch.from_numpy(mask[idx % 11 if self.is_hidden else 21]).long()
             # remind: change 21 to 11 if hidden, and change 11 to 21 if other
         else:
-            print("Warning: returning empty label for unlabeled dataset")
             label = torch.tensor(-1)
 
         return image, label
