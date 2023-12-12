@@ -1,2 +1,3 @@
-https://drive.google.com/file/d/1pGPOE57lN367BO2R_0nXfuJARZlRyAJG/view?usp=drive_link
-https://drive.google.com/file/d/1AGg9HCztwAbeBx8fEY1-gm8wE2pa-nqD/view?usp=drive_link
+[Semantic segmentation model(UNet)](https://drive.google.com/file/d/1pGPOE57lN367BO2R_0nXfuJARZlRyAJG/view?usp=drive_link)
+
+[Vedio frame prediction(SimVP)](https://drive.google.com/file/d/1D7Grb93zwZYjZZJfsmb58O_m39ZWBmdt/view?usp=sharing)
