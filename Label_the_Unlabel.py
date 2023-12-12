@@ -4,10 +4,12 @@ from model.UNet import *
 import torch
 from tqdm import tqdm
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-batch_size = 11
+LABEL_DATASET="hidden"
 
-unlabel_dataset = ImageMaskDataset(dataset_type='hidden')
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+batch_size = 11 if LABEL_DATASET == "hidden" else 22
+
+unlabel_dataset = ImageMaskDataset(dataset_type=LABEL_DATASET)
 unlabel_dataloader = DataLoader(unlabel_dataset, batch_size=batch_size, shuffle=False)
 
 print(len(unlabel_dataloader))
@@ -17,10 +19,10 @@ saved_state_dict = torch.load('weight/unet_20.pth', map_location=device)
 model.load_state_dict(saved_state_dict)
 
 # 确保输出目录存在
-output_dir = "./hidden"
+output_dir = "./hidden" if LABEL_DATASET=="hidden" else "./unlabel"
 os.makedirs(output_dir, exist_ok=True)
 
-video_index = 15000  # 起始索引
+video_index = 15000 if LABEL_DATASET == "hidden" else 2000
 
 with torch.no_grad():
     for data in tqdm(unlabel_dataloader, desc="Processing unlabelled data"):
