@@ -26,8 +26,10 @@ If you want to use the pre-trained weight of my work, you can download them here
 
 2. We need to first train a semantic segmentation model. Run seg_main.py, it will train a UNet for 20 epochs and give us this model. To skip this part, you can download the pre-trained weight(links above).
 
-3. Make sure we have the path "weight/unet_20.pth". Then run Label_the_Unlabel.py, and it will label 13000 unlabeled data (generate mask.npy for each video).
+3. Make sure we have the path "weight/unet_20.pth". Then run Label_the_Unlabel.py, and it will label 2000 unlabeled data for the hidden set. (generate mask.npy for each video).
 
-4. Make sure each unlabeled data has a pseudo-label, then run main_classification.py. It will train the SimVP model for 100 epochs. Then we can get the final model that could be used to generate results.
+4. Now change line 7 of Label_the_Unlabel.py to LABEL_DATASET="unlabeled", then run it again. We do this because we want to generate labels for unlabeled datasets as well.
 
-5. Run Result_Generator.py, it will read the hidden dataset and generate the final .pt file with shape (2000,160,240).
+5. Make sure each unlabeled data has a pseudo-label, then run main_classification.py. It will train the SimVP model for 100 epochs. Then we can get the final model that could be used to generate results.
+
+6. Run Result_Generator.py, it will read the hidden dataset and generate the final .pt file with shape (2000,160,240).
