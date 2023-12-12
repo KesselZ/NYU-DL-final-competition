@@ -39,12 +39,9 @@ val_inputs, val_labels = next(iter(val_dataloader))
 print("\nValidation DataLoader:")
 print("Inputs Shape:", val_inputs.shape)
 print("Labels Shape:", val_labels.shape)
-# plot_timestep_images(convert_mask_to_gray_image(val_inputs))
 print(len(train_dataset))
-# model = ConvLSTM(input_dim, hidden_dim, kernel_size, num_layers, output_dim).to(device)
 
-print("START")
-epochs = 140
+epochs = 100
 num_epoch_for_val = 50
 
 # input is T,channel,H,W
@@ -86,7 +83,7 @@ def validate_model(model, val_dataloader, device):
 
 
 train_loss = 0
-# 训练循环
+# Train the model
 for epoch in range(epochs):
     model.train()
     total_train_loss = 0
@@ -103,9 +100,8 @@ for epoch in range(epochs):
         # inputs,labels=convert_mask_to_gray_image(inputs),convert_mask_to_gray_image(labels)
         optimizer.zero_grad()
 
-        # 无需autocast上下文
         outputs = model(inputs)
-
+        
         outputs_permute = outputs.permute(0, 2, 1, 3, 4)
         loss = criterion(outputs_permute, labels.long())
         train_loss = loss
@@ -132,5 +128,5 @@ for epoch in range(epochs):
 
 time.sleep(0.1)
 
-torch.save(model.state_dict(), 'weight/SimVP_check_44.08.pth')
+torch.save(model.state_dict(), 'weight/SimVP_check_44.23.pth')
 
