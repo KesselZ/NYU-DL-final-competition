@@ -17,7 +17,7 @@ If you want to use the pre-trained weight of my work, you can download them here
 
 [Semantic segmentation model(UNet)](https://drive.google.com/file/d/1pGPOE57lN367BO2R_0nXfuJARZlRyAJG/view?usp=drive_link)
 
-[Vedio frame prediction(SimVP)](https://drive.google.com/file/d/1PE-CBi5CiZi3xiQzu25zfe1vtxjWzy_5/view?usp=sharing)
+[Vedio frame prediction(SimVP)](https://drive.google.com/file/d/1D7Grb93zwZYjZZJfsmb58O_m39ZWBmdt/view?usp=sharing)
 
 
 **How to reproduce**:
