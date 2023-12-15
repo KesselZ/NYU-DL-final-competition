@@ -33,3 +33,6 @@ If you want to use the pre-trained weight of my work, you can download them here
 5. Make sure each unlabeled data has a pseudo-label, then run main_classification.py. It will train the SimVP model for 100 epochs. Then we can get the final model that could be used to generate results.
 
 6. Run Result_Generator.py, it will read the hidden dataset and generate the final .pt file with shape (2000,160,240).
+
+
+Result: Our model achieved IOU of 44.44 in the hidden set and we won first place in the competition.
